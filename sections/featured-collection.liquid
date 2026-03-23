@@ -3,7 +3,10 @@
     <div class="section-header">
       <h2 class="section-header__title">{{ section.settings.title | escape }}</h2>
       {%- if section.settings.view_all -%}
-        <a href="{{ section.settings.collection.url }}" class="section-header__link">View All</a>
+        <a href="{{ section.settings.collection.url }}" class="section-header__link">
+          VIEW ALL 
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
       {%- endif -%}
     </div>
   {%- endif -%}
@@ -17,11 +20,11 @@
     {%- else -%}
       {%- for i in (1..section.settings.products_to_show) -%}
         <div class="product-grid__item">
-          <div class="product-card">
-             {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
-             <p style="margin-top:10px">Sample Product {{ i }}</p>
-             <p>$19.99</p>
-          </div>
+           <div class="product-card-placeholder">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+              <h3 class="product-card__title">Sample Product {{ i }}</h3>
+              <p class="product-card__price">$29.99</p>
+           </div>
         </div>
       {%- endfor -%}
     {%- endfor -%}
@@ -30,38 +33,47 @@
 
 <style>
   .featured-collection {
-    padding: 60px 0;
+    padding: 80px 0;
   }
   .section-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 40px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    align-items: center;
+    margin-bottom: 50px;
   }
   .section-header__title {
-    font-size: 24px;
-    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
+    margin: 0;
   }
   .section-header__link {
     font-size: 13px;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    text-transform: uppercase;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .section-header__link:hover {
+    border-color: #000;
   }
   .product-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 30px 20px;
+    gap: 40px 20px;
   }
 
   @media (max-width: 990px) {
     .product-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: 30px 15px;
     }
+    .section-header__title { font-size: 20px; }
   }
 </style>
 
@@ -69,37 +81,13 @@
 {
   "name": "Featured Collection",
   "settings": [
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Heading",
-      "default": "Featured Collection"
-    },
-    {
-      "type": "collection",
-      "id": "collection",
-      "label": "Collection"
-    },
-    {
-      "type": "range",
-      "id": "products_to_show",
-      "min": 2,
-      "max": 12,
-      "step": 1,
-      "default": 4,
-      "label": "Maximum products to show"
-    },
-    {
-      "type": "checkbox",
-      "id": "view_all",
-      "label": "Enable 'View all' button",
-      "default": true
-    }
+    { "type": "text", "id": "title", "label": "Heading", "default": "NEW ARRIVALS" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "min": 2, "max": 12, "step": 1, "default": 4, "label": "Maximum products" },
+    { "type": "checkbox", "id": "view_all", "label": "Enable 'View all'", "default": true }
   ],
   "presets": [
-    {
-      "name": "Featured Collection"
-    }
+    { "name": "Featured Collection" }
   ]
 }
 {% endschema %}

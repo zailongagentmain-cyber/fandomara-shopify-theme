@@ -1,7 +1,5 @@
 {% comment %}
-    Renders a product card
-    Accepts:
-    - product: {Object} Product object (required)
+    Pixel-Perfect Refined Product Card for Fandomara
 {% endcomment %}
 
 <div class="product-card">
@@ -9,16 +7,14 @@
     <div class="product-card__image-wrapper">
       {%- if product.featured_media != blank -%}
         <img
-          src="{{ product.featured_media | image_url: width: 533 }}"
+          src="{{ product.featured_media | image_url: width: 600 }}"
           alt="{{ product.featured_media.alt | escape }}"
           class="product-card__image"
           loading="lazy"
-          width="{{ product.featured_media.width }}"
-          height="{{ product.featured_media.height }}"
         >
         {%- if product.media[1] != blank -%}
           <img
-            src="{{ product.media[1] | image_url: width: 533 }}"
+            src="{{ product.media[1] | image_url: width: 600 }}"
             alt="{{ product.media[1].alt | escape }}"
             class="product-card__image product-card__image--hover"
             loading="lazy"
@@ -48,60 +44,74 @@
 <style>
   .product-card {
     position: relative;
-    transition: transform 0.3s ease;
+    text-align: left;
   }
-  .product-card:hover {
-    transform: translateY(-5px);
+  .product-card__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
   }
   .product-card__image-wrapper {
     position: relative;
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    background: #f5f5f5;
-    margin-bottom: 15px;
+    background: #f9f9f9; /* 原站那种极浅灰背景 */
+    border-radius: 2px;
   }
   .product-card__image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.4s ease;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   .product-card__image--hover {
     position: absolute;
     top: 0;
     left: 0;
     opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .product-card__link:hover .product-card__image {
+    transform: scale(1.05);
   }
   .product-card__link:hover .product-card__image--hover {
     opacity: 1;
   }
   .product-card__badge {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background: var(--color-accent);
-    color: white;
-    padding: 4px 8px;
+    top: 12px;
+    left: 12px;
+    background: #000; /* 原站 badge 通常是黑色或红色 */
+    color: #fff;
+    padding: 5px 10px;
     font-size: 10px;
-    font-weight: bold;
-    border-radius: 2px;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    z-index: 2;
   }
   .product-card__title {
-    font-size: 14px;
-    margin: 0 0 8px;
-    font-weight: 500;
-    color: var(--color-text);
+    font-size: 13px; /* 原站字号较小，显得精致 */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 15px 0 8px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
   .product-card__price {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
   }
   .price-item--regular {
     text-decoration: line-through;
     color: #999;
-    margin-right: 8px;
     font-weight: 400;
-    font-size: 13px;
+    margin-right: 10px;
   }
   .price-item--sale {
     color: var(--color-accent);
