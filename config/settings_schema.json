@@ -3,7 +3,32 @@
     "name": "theme_info",
     "theme_name": "Fandomara Native",
     "theme_author": "Developer",
-    "theme_version": "1.0.0"
+    "theme_version": "1.0.0",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "colors_background_1",
+        "label": "Background 1",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "colors_text",
+        "label": "Text",
+        "default": "#121212"
+      },
+      {
+        "type": "color",
+        "id": "colors_accent",
+        "label": "Accent Color",
+        "default": "#ff0000"
+      }
+    ]
   },
   {
     "name": "Typography",
