@@ -1,0 +1,13 @@
+{
+  "name": "Cart",
+  "wrapper": "div#MainContent",
+  "sections": {
+    "main": {
+      "type": "main-cart",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

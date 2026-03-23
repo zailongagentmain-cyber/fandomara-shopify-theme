@@ -1,0 +1,120 @@
+<div class="cart-section container">
+  <div class="cart-header">
+    <h1 class="cart-title">Your Cart</h1>
+    <a href="{{ routes.all_products_collection_url }}" class="continue-shopping">Continue shopping</a>
+  </div>
+
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" id="cart">
+      <div class="cart-items">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th colspan="2">Product</th>
+              <th>Quantity</th>
+              <th class="text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for item in cart.items -%}
+              <tr class="cart-item" id="CartItem-{{ item.index | plus: 1 }}">
+                <td class="cart-item__media">
+                  {% if item.image %}
+                    <a href="{{ item.url }}">
+                      <img src="{{ item.image | image_url: width: 150 }}" alt="{{ item.image.alt | escape }}" loading="lazy">
+                    </a>
+                  {% endif %}
+                </td>
+                <td class="cart-item__details">
+                  <a href="{{ item.url }}" class="cart-item__name">{{ item.product.title }}</a>
+                  {%- if item.product.has_only_default_variant == false -%}
+                    <p class="cart-item__variant">{{ item.variant.title }}</p>
+                  {%- endif -%}
+                  <div class="cart-item__price">
+                    {{ item.original_price | money }}
+                  </div>
+                  <a href="{{ item.url_to_remove }}" class="cart-item__remove">Remove</a>
+                </td>
+                <td class="cart-item__quantity">
+                  <div class="quantity-input">
+                    <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" id="Quantity-{{ item.index | plus: 1 }}">
+                  </div>
+                </td>
+                <td class="cart-item__totals text-right">
+                  {{ item.final_line_price | money }}
+                </td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cart-footer">
+        <div class="cart-footer__content">
+          <div class="cart-totals">
+            <h3 class="cart-totals__subtotal">Subtotal</h3>
+            <p class="cart-totals__price">{{ cart.total_price | money_with_currency }}</p>
+          </div>
+          <p class="tax-note">Taxes and shipping calculated at checkout</p>
+          <div class="cart-actions">
+            <button type="submit" name="update" class="update-cart-btn">Update Cart</button>
+            <button type="submit" name="checkout" class="checkout-btn">Check Out</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  {%- else -%}
+    <div class="cart-empty text-center">
+      <p>Your cart is currently empty.</p>
+      <a href="{{ routes.all_products_collection_url }}" class="button">Start Shopping</a>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .cart-section { padding: 60px 0; }
+  .cart-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+  .cart-title { font-size: 32px; margin: 0; text-transform: uppercase; }
+  .continue-shopping { font-size: 14px; text-decoration: underline; color: #666; }
+  
+  .cart-table { width: 100%; border-collapse: collapse; }
+  .cart-table th { text-align: left; padding: 15px 0; border-bottom: 1px solid #eee; font-size: 13px; text-transform: uppercase; color: #999; }
+  .cart-item td { padding: 30px 0; border-bottom: 1px solid #eee; }
+  .cart-item__media { width: 120px; }
+  .cart-item__media img { width: 100px; height: auto; border: 1px solid #eee; }
+  .cart-item__name { font-weight: bold; font-size: 16px; display: block; margin-bottom: 5px; }
+  .cart-item__variant { font-size: 13px; color: #666; margin-bottom: 10px; }
+  .cart-item__remove { font-size: 12px; text-decoration: underline; color: #ff0000; cursor: pointer; }
+  
+  .quantity-input input { width: 60px; padding: 8px; text-align: center; border: 1px solid #ddd; }
+  .text-right { text-align: right; }
+
+  .cart-footer { display: flex; justify-content: flex-end; margin-top: 40px; }
+  .cart-footer__content { width: 100%; max-width: 400px; text-align: right; }
+  .cart-totals { display: flex; justify-content: flex-end; gap: 20px; align-items: baseline; margin-bottom: 10px; }
+  .cart-totals__subtotal { font-size: 18px; margin: 0; }
+  .cart-totals__price { font-size: 24px; font-weight: bold; margin: 0; }
+  .tax-note { font-size: 13px; color: #888; margin-bottom: 30px; }
+  
+  .cart-actions { display: flex; flex-direction: column; gap: 15px; }
+  .update-cart-btn { background: none; border: 1px solid #ddd; padding: 12px; cursor: pointer; font-size: 13px; text-transform: uppercase; }
+  .checkout-btn { background: var(--color-text); color: white; border: none; padding: 18px; font-weight: bold; cursor: pointer; font-size: 16px; letter-spacing: 0.1em; }
+  .checkout-btn:hover { opacity: 0.9; }
+
+  .cart-empty { padding: 100px 0; }
+  .button { display: inline-block; background: var(--color-text); color: white; padding: 15px 40px; margin-top: 20px; text-decoration: none; font-weight: bold; }
+
+  @media (max-width: 768px) {
+    .cart-table thead { display: none; }
+    .cart-item { display: grid; grid-template-columns: 100px 1fr; gap: 20px; position: relative; }
+    .cart-item__totals { grid-column: 2; text-align: left; font-weight: bold; }
+    .cart-item__quantity { grid-column: 2; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Cart Page",
+  "settings": []
+}
+{% endschema %}
