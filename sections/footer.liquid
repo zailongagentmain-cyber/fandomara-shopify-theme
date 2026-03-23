@@ -1,36 +1,50 @@
 <footer class="footer">
   <div class="container">
-    <div class="footer__blocks">
+    <div class="footer__blocks-wrapper">
       {%- for block in section.blocks -%}
-        <div class="footer__block" {{ block.shopify_attributes }}>
+        <div class="footer-block" {{ block.shopify_attributes }}>
+          {%- if block.settings.heading != blank -%}
+            <h2 class="footer-block__heading">{{ block.settings.heading | escape }}</h2>
+          {%- endif -%}
+
           {%- case block.type -%}
-            {%- when 'menu' -%}
-              <div class="footer__menu">
-                <h3 class="footer__block-title">{{ block.settings.heading | escape }}</h3>
-                <ul class="footer__menu-list">
+            {%- when 'text' -%}
+              <div class="footer-block__details-content rte">
+                {{ block.settings.subtext }}
+              </div>
+            {%- when 'link_list' -%}
+              {%- if block.settings.menu != blank -%}
+                <ul class="footer-block__details-content list-unstyled">
                   {%- for link in block.settings.menu.links -%}
-                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                    <li>
+                      <a href="{{ link.url }}" class="link list-menu__item list-menu__item--link{% if link.active %} list-menu__item--active{% endif %}">
+                        {{ link.title }}
+                      </a>
+                    </li>
                   {%- endfor -%}
                 </ul>
-              </div>
-            {%- when 'text' -%}
-              <div class="footer__text">
-                <h3 class="footer__block-title">{{ block.settings.heading | escape }}</h3>
-                <div class="footer__text-content rte">
-                  {{ block.settings.content }}
-                </div>
-              </div>
+              {%- endif -%}
           {%- endcase -%}
         </div>
       {%- endfor -%}
     </div>
 
-    <div class="footer__bottom">
-      <div class="footer__copyright">
-        &copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: routes.root_url }}. All rights reserved.
-      </div>
-      <div class="footer__payment-icons">
-        {% comment %} 这里可以加入支付图标逻辑 {% endcomment %}
+    <div class="footer__content-bottom">
+      <div class="footer__column footer__column--info">
+        <div class="footer__copyright">
+          <small class="copyright__content">&copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: routes.root_url }}</small>
+          <small class="copyright__content">Powered by Shopify</small>
+        </div>
+        <div class="footer__payment">
+          <span class="visually-hidden">Payment methods</span>
+          <ul class="list list-payment" role="list">
+            {%- for type in shop.enabled_payment_types -%}
+              <li class="list-payment__item">
+                {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -38,68 +52,96 @@
 
 <style>
   .footer {
-    background-color: #f8f8f8;
-    padding: 80px 0 40px;
-    margin-top: 60px;
-    border-top: 1px solid #eee;
+    border-top: 0.1rem solid var(--color-border);
+    padding: 5rem 0;
+    margin-top: 5rem;
+    background-color: var(--color-background);
   }
-  .footer__blocks {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 40px;
-    margin-bottom: 60px;
+
+  .footer__blocks-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4rem;
+    margin-bottom: 5rem;
   }
-  .footer__block-title {
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 25px;
-    font-weight: bold;
+
+  .footer-block {
+    flex: 1 1 calc(25% - 4rem);
+    min-width: 25rem;
   }
-  .footer__menu-list {
+
+  .footer-block__heading {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  .footer-block__details-content {
+    font-size: 1.4rem;
+    color: var(--color-foreground);
+    opacity: 0.75;
+  }
+
+  .list-unstyled {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  .footer__menu-list li {
-    margin-bottom: 12px;
+
+  .list-menu__item {
+    display: block;
+    padding-bottom: 1.5rem;
+    color: var(--color-foreground);
+    text-decoration: none;
+    opacity: 0.75;
+    transition: opacity 0.3s;
   }
-  .footer__menu-list a {
-    font-size: 14px;
-    color: #666;
-    transition: color 0.3s;
+
+  .list-menu__item:hover {
+    opacity: 1;
   }
-  .footer__menu-list a:hover {
-    color: var(--color-text);
+
+  .footer__content-bottom {
+    border-top: 0.1rem solid var(--color-border);
+    padding-top: 3rem;
   }
-  .footer__text-content {
-    font-size: 14px;
-    color: #666;
-    line-height: 1.6;
-  }
-  .footer__bottom {
-    padding-top: 40px;
-    border-top: 1px solid #eee;
+
+  .footer__column--info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
-    color: #999;
+    flex-wrap: wrap;
+    gap: 2rem;
   }
 
-  @media (max-width: 990px) {
-    .footer__blocks {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .footer__copyright {
+    display: flex;
+    gap: 1rem;
+    font-size: 1.2rem;
+    opacity: 0.75;
   }
-  @media (max-width: 768px) {
-    .footer__blocks {
-      grid-template-columns: 1fr;
-    }
-    .footer__bottom {
+
+  .list-payment {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .list-payment__item svg {
+    width: 3.8rem;
+    height: 2.4rem;
+  }
+
+  @media screen and (max-width: 749px) {
+    .footer__column--info {
       flex-direction: column;
-      gap: 20px;
+      align-items: center;
       text-align: center;
+    }
+    .footer__blocks-wrapper {
+      flex-direction: column;
     }
   }
 </style>
@@ -109,20 +151,20 @@
   "name": "Footer",
   "blocks": [
     {
-      "type": "menu",
+      "type": "link_list",
       "name": "Menu",
       "settings": [
         {
           "type": "text",
           "id": "heading",
-          "label": "Heading",
-          "default": "Quick links"
+          "default": "Quick links",
+          "label": "Heading"
         },
         {
           "type": "link_list",
           "id": "menu",
-          "label": "Menu",
-          "default": "footer"
+          "default": "footer",
+          "label": "Menu"
         }
       ]
     },
@@ -133,22 +175,26 @@
         {
           "type": "text",
           "id": "heading",
-          "label": "Heading",
-          "default": "Our Story"
+          "default": "Heading",
+          "label": "Heading"
         },
         {
           "type": "richtext",
-          "id": "content",
-          "label": "Content",
-          "default": "<p>Share store details, promotions, or brand content with your customers.</p>"
+          "id": "subtext",
+          "default": "<p>Share contact information, store details, and brand content with your customers.</p>",
+          "label": "Subtext"
         }
       ]
     }
   ],
   "default": {
     "blocks": [
-      { "type": "menu" },
-      { "type": "text" }
+      {
+        "type": "link_list"
+      },
+      {
+        "type": "text"
+      }
     ]
   }
 }

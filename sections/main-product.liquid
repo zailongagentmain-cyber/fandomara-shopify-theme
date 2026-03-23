@@ -1,6 +1,6 @@
 <section class="product-section container">
   <div class="product-layout">
-    <!-- 1. Product Media (Left) -->
+    <!-- 1. Product Media -->
     <div class="product-media">
       <div class="product-main-image-wrapper">
         <img src="{{ product.featured_media | image_url: width: 1200 }}" 
@@ -17,17 +17,16 @@
       </div>
     </div>
 
-    <!-- 2. Product Info (Right) -->
+    <!-- 2. Product Info -->
     <div class="product-info-sticky">
       <div class="product-info-header">
-        <p class="product-vendor">{{ product.vendor | uppercase }}</p>
         <h1 class="product-title-refined">{{ product.title }}</h1>
         
         <div class="product-price-refined">
           <span class="price-current">{{ product.selected_or_first_available_variant.price | money }}</span>
           {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
             <span class="price-old">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
-            <span class="price-badge-sale">SALE</span>
+            <span class="price-badge-sale">Sale</span>
           {%- endif -%}
         </div>
       </div>
@@ -40,7 +39,7 @@
           <div class="variant-picker">
             {%- for option in product.options_with_values -%}
               <fieldset class="variant-input-wrapper">
-                <legend class="variant-label">{{ option.name }}: <span id="SelectedValue-{{ forloop.index }}">{{ option.selected_value }}</span></legend>
+                <legend class="variant-label">{{ option.name }}</legend>
                 <div class="variant-options-grid">
                   {%- for value in option.values -%}
                     <input type="radio" 
@@ -62,33 +61,33 @@
 
         <!-- Buy Buttons -->
         <div class="product-buy-buttons">
-          <div class="quantity-input-refined">
-             <button type="button" onclick="this.parentNode.querySelector('input').stepDown()">-</button>
-             <input type="number" name="quantity" value="1" min="1">
-             <button type="button" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+          <label class="variant-label" for="Quantity">Quantity</label>
+          <div class="product-buy-row">
+            <div class="quantity-input-refined">
+               <button type="button" onclick="this.parentNode.querySelector('input').stepDown()">-</button>
+               <input type="number" id="Quantity" name="quantity" value="1" min="1">
+               <button type="button" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+            </div>
+            <button type="submit" name="add" class="button atc-button-precision" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+              {%- if product.selected_or_first_available_variant.available -%}
+                Add to cart
+              {%- else -%}
+                Sold out
+              {%- endif -%}
+            </button>
           </div>
-          <button type="submit" name="add" class="atc-button-precision" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-            {%- if product.selected_or_first_available_variant.available -%}
-              ADD TO CART
-            {%- else -%}
-              SOLD OUT
-            {%- endif -%}
-          </button>
         </div>
       {%- endform -%}
 
-      <!-- Accordion Description (Precision) -->
+      <!-- Accordion Description -->
       <div class="product-accordions">
-        <details open>
-          <summary>DESCRIPTION <span class="icon">+</span></summary>
-          <div class="accordion-content rte">
+        <details class="accordion" open>
+          <summary class="accordion__title">
+            Description 
+            <svg class="icon icon-caret" width="14" height="14" viewBox="0 0 10 6" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor"></path></svg>
+          </summary>
+          <div class="accordion__content rte">
             {{ product.description }}
-          </div>
-        </details>
-        <details>
-          <summary>SHIPPING POLICY <span class="icon">+</span></summary>
-          <div class="accordion-content">
-            <p>Free standard shipping on orders over $50. Processing time 2-4 business days.</p>
           </div>
         </details>
       </div>
@@ -97,72 +96,98 @@
 </section>
 
 <style>
-  /* Refined PDP Styles */
-  .product-section { padding: 60px 0; }
-  .product-layout { display: grid; grid-template-columns: 1.3fr 1fr; gap: 60px; }
+  .product-section { padding: 4rem 0; }
+  .product-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
   
-  .product-title-refined { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin: 0 0 15px; color: #121212; letter-spacing: -0.01em; }
-  .product-vendor { font-size: 11px; letter-spacing: 0.2em; color: rgba(18, 18, 18, 0.5); margin-bottom: 8px; }
-  
-  .product-price-refined { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
-  .price-current { font-size: 1.8rem; font-weight: 500; color: #121212; }
-  .price-old { color: rgba(18, 18, 18, 0.5); text-decoration: line-through; font-size: 1.4rem; }
-  .price-badge-sale { background: #f3f3f3; color: #121212; padding: 4px 12px; border-radius: 40px; font-size: 1.2rem; }
+  .product-main-image-wrapper { background: #f3f3f3; margin-bottom: 1rem; }
+  .product-main-image { width: 100%; display: block; }
+  .product-thumbnails { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; }
+  .thumbnail-item { width: calc(25% - 0.75rem); flex-shrink: 0; cursor: pointer; scroll-snap-align: start; }
+  .thumbnail-item img { width: 100%; height: auto; display: block; border: 1px solid var(--color-border); }
 
-  /* Variant Picker Precision */
-  .variant-input-wrapper { border: none; padding: 0; margin: 0 0 25px; }
-  .variant-label { font-size: 1.3rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; }
-  .variant-label span { font-weight: 400; color: #666; }
-  .variant-options-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .product-info-sticky { position: sticky; top: 8rem; }
+  
+  .product-title-refined { font-size: 3rem; margin-bottom: 1.5rem; letter-spacing: 0; }
+  
+  .product-price-refined { display: flex; align-items: center; gap: 1rem; margin-bottom: 3rem; }
+  .price-current { font-size: 2.2rem; font-weight: 500; }
+  .price-old { font-size: 1.6rem; text-decoration: line-through; color: rgba(18, 18, 18, 0.75); }
+  .price-badge-sale { background: var(--color-background); border: 1px solid var(--color-border); padding: 0.6rem 1.2rem; border-radius: 4rem; font-size: 1.2rem; }
+
+  /* Variant Picker */
+  .variant-input-wrapper { border: none; padding: 0; margin: 0 0 2.5rem; }
+  .variant-label { font-size: 1.4rem; margin-bottom: 1rem; display: block; }
+  .variant-options-grid { display: flex; flex-wrap: wrap; gap: 1rem; }
   .variant-swatch { 
-    border: 1px solid rgba(18, 18, 18, 0.1); 
-    padding: 10px 20px; 
+    border: 1px solid var(--color-border); 
+    padding: 1rem 2rem; 
     cursor: pointer; 
-    font-size: 1.3rem; 
-    transition: all 0.2s ease;
+    font-size: 1.4rem; 
+    transition: all 0.1s ease;
+    border-radius: 0;
   }
   input:checked + .variant-swatch { 
-    background: #121212; 
+    background: var(--color-foreground); 
     color: #fff; 
-    border-color: #121212; 
+    border-color: var(--color-foreground); 
   }
 
-  /* ATC Button Precision */
-  .product-buy-buttons { display: flex; gap: 10px; margin-top: 35px; }
-  .quantity-input-refined { display: flex; border: 1px solid rgba(18, 18, 18, 0.1); width: 120px; }
-  .quantity-input-refined button { flex: 1; background: none; border: none; cursor: pointer; font-size: 18px; }
-  .quantity-input-refined input { width: 40px; border: none; text-align: center; font-weight: 600; }
+  /* Buy buttons */
+  .product-buy-buttons { margin-bottom: 4rem; }
+  .product-buy-row { display: flex; gap: 1rem; margin-top: 1rem; }
+  .quantity-input-refined { 
+    display: flex; 
+    border: 1px solid var(--color-foreground); 
+    width: 14rem; 
+    height: 5rem;
+  }
+  .quantity-input-refined button { 
+    background: none; 
+    border: none; 
+    width: 4.5rem; 
+    font-size: 1.8rem; 
+    color: var(--color-foreground); 
+    cursor: pointer;
+  }
+  .quantity-input-refined input { 
+    flex: 1; 
+    border: none; 
+    text-align: center; 
+    font-size: 1.5rem; 
+    font-family: inherit;
+    background: transparent;
+    color: var(--color-foreground);
+    -moz-appearance: textfield;
+  }
+  .quantity-input-refined input::-webkit-outer-spin-button,
+  .quantity-input-refined input::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
   
   .atc-button-precision { 
-    flex: 2; 
-    height: 50px; 
-    background: #121212; 
-    color: #fff; 
-    border: none; 
-    font-weight: 600; 
-    letter-spacing: 0.1em; 
-    cursor: pointer;
-    transition: box-shadow 0.1s ease;
+    flex: 1; 
+    height: 5rem;
   }
-  .atc-button-precision:hover { box-shadow: 0 0 0 0.1rem #121212; }
 
-  /* Accordion Precision */
-  .product-accordions { margin-top: 40px; border-top: 1px solid #eee; }
-  details { border-bottom: 1px solid #eee; }
-  summary { 
-    padding: 15px 0; 
-    list-style: none; 
-    cursor: pointer; 
-    font-weight: 600; 
-    font-size: 1.2rem; 
-    letter-spacing: 0.15em; 
-    display: flex; 
-    justify-content: space-between; 
+  /* Accordions */
+  .product-accordions { border-top: 1px solid var(--color-border); }
+  .accordion { border-bottom: 1px solid var(--color-border); }
+  .accordion__title {
+    padding: 2rem 0;
+    list-style: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  summary::-webkit-details-marker { display: none; }
-  .accordion-content { padding-bottom: 20px; font-size: 1.4rem; color: #444; line-height: 1.6; }
+  .accordion__title::-webkit-details-marker { display: none; }
+  details[open] .icon-caret { transform: rotate(180deg); }
+  .accordion__content { padding-bottom: 2rem; font-size: 1.5rem; line-height: 1.6; }
 
   @media (max-width: 990px) {
     .product-layout { grid-template-columns: 1fr; }
+    .product-title-refined { font-size: 2.4rem; }
   }
 </style>
