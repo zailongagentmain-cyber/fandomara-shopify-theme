@@ -1,6 +1,6 @@
 <section class="product-section container">
   <div class="product-layout">
-    <!-- 1. Product Media -->
+    <!-- 1. Product Media (Left) -->
     <div class="product-media">
       <div class="product-main-image-wrapper">
         <img src="{{ product.featured_media | image_url: width: 1200 }}" 
@@ -17,15 +17,17 @@
       </div>
     </div>
 
-    <!-- 2. Product Info -->
+    <!-- 2. Product Info (Right) -->
     <div class="product-info-sticky">
       <div class="product-info-header">
         <p class="product-vendor">{{ product.vendor | uppercase }}</p>
-        <h1 class="product-title-large">{{ product.title }}</h1>
-        <div class="product-price-large">
+        <h1 class="product-title-refined">{{ product.title }}</h1>
+        
+        <div class="product-price-refined">
           <span class="price-current">{{ product.selected_or_first_available_variant.price | money }}</span>
           {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
             <span class="price-old">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+            <span class="price-badge-sale">SALE</span>
           {%- endif -%}
         </div>
       </div>
@@ -33,31 +35,39 @@
       {%- form 'product', product, class: 'product-form-refined' -%}
         <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
         
+        <!-- Precision Variant Picker (Radios) -->
         {%- unless product.has_only_default_variant -%}
-          <div class="product-options-wrapper">
+          <div class="variant-picker">
             {%- for option in product.options_with_values -%}
-              <div class="option-row">
-                <label class="option-label">{{ option.name }}</label>
-                <div class="option-swatches">
+              <fieldset class="variant-input-wrapper">
+                <legend class="variant-label">{{ option.name }}: <span id="SelectedValue-{{ forloop.index }}">{{ option.selected_value }}</span></legend>
+                <div class="variant-options-grid">
                   {%- for value in option.values -%}
-                    <label class="swatch-label">
-                      <input type="radio" name="{{ option.name }}" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %} class="visually-hidden">
-                      <span class="swatch-text">{{ value }}</span>
+                    <input type="radio" 
+                           id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                           name="{{ option.name }}"
+                           value="{{ value | escape }}"
+                           form="{{ product_form_id }}"
+                           {% if option.selected_value == value %}checked{% endif %}
+                           class="visually-hidden">
+                    <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}" class="variant-swatch">
+                      {{ value }}
                     </label>
                   {%- endfor -%}
                 </div>
-              </div>
+              </fieldset>
             {%- endfor -%}
           </div>
         {%- endunless -%}
 
-        <div class="product-buy-row">
-          <div class="quantity-selector-refined">
-            <button type="button" onclick="this.parentNode.querySelector('input').stepDown()">-</button>
-            <input type="number" name="quantity" value="1" min="1">
-            <button type="button" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+        <!-- Buy Buttons -->
+        <div class="product-buy-buttons">
+          <div class="quantity-input-refined">
+             <button type="button" onclick="this.parentNode.querySelector('input').stepDown()">-</button>
+             <input type="number" name="quantity" value="1" min="1">
+             <button type="button" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
           </div>
-          <button type="submit" name="add" class="add-to-cart-refined-btn" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+          <button type="submit" name="add" class="atc-button-precision" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
             {%- if product.selected_or_first_available_variant.available -%}
               ADD TO CART
             {%- else -%}
@@ -67,48 +77,92 @@
         </div>
       {%- endform -%}
 
-      <div class="product-description-refined rte">
-        {{ product.description }}
+      <!-- Accordion Description (Precision) -->
+      <div class="product-accordions">
+        <details open>
+          <summary>DESCRIPTION <span class="icon">+</span></summary>
+          <div class="accordion-content rte">
+            {{ product.description }}
+          </div>
+        </details>
+        <details>
+          <summary>SHIPPING POLICY <span class="icon">+</span></summary>
+          <div class="accordion-content">
+            <p>Free standard shipping on orders over $50. Processing time 2-4 business days.</p>
+          </div>
+        </details>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .product-section { padding: 80px 0; }
-  .product-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 80px; align-items: start; }
+  /* Refined PDP Styles */
+  .product-section { padding: 60px 0; }
+  .product-layout { display: grid; grid-template-columns: 1.3fr 1fr; gap: 60px; }
   
-  .product-main-image-wrapper { background: #f9f9f9; border: 1px solid #eee; position: sticky; top: 120px; }
-  .product-main-image { width: 100%; display: block; }
-  .product-thumbnails { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-  .thumbnail-item { width: 70px; aspect-ratio: 1; cursor: pointer; border: 1px solid #eee; overflow: hidden; }
-  .thumbnail-item img { width: 100%; height: 100%; object-fit: cover; }
-
-  .product-info-sticky { position: sticky; top: 120px; }
-  .product-vendor { font-size: 12px; letter-spacing: 0.2em; color: #888; margin-bottom: 10px; }
-  .product-title-large { font-size: 32px; font-weight: 800; text-transform: uppercase; line-height: 1.2; margin-bottom: 20px; }
-  .product-price-large { margin-bottom: 40px; }
-  .price-current { font-size: 24px; font-weight: 700; color: #000; }
-  .price-old { font-size: 18px; text-decoration: line-through; color: #999; margin-left: 15px; }
-
-  .option-row { margin-bottom: 30px; }
-  .option-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.1em; }
-  .option-swatches { display: flex; gap: 10px; flex-wrap: wrap; }
-  .swatch-text { display: block; padding: 10px 20px; border: 1px solid #ddd; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-  input:checked + .swatch-text { border-color: #000; background: #000; color: #fff; }
-
-  .product-buy-row { display: flex; gap: 15px; margin-top: 40px; }
-  .quantity-selector-refined { display: flex; border: 1px solid #ddd; }
-  .quantity-selector-refined button { background: none; border: none; padding: 0 15px; cursor: pointer; font-size: 18px; }
-  .quantity-selector-refined input { width: 40px; border: none; text-align: center; font-weight: bold; }
+  .product-title-refined { font-size: 2.4rem; font-weight: 600; line-height: 1.2; margin: 0 0 15px; color: #121212; letter-spacing: -0.01em; }
+  .product-vendor { font-size: 11px; letter-spacing: 0.2em; color: rgba(18, 18, 18, 0.5); margin-bottom: 8px; }
   
-  .add-to-cart-refined-btn { flex: 1; padding: 18px; background: #000; color: #fff; border: none; font-weight: 800; letter-spacing: 0.2em; cursor: pointer; }
-  .add-to-cart-refined-btn:hover { background: #333; }
+  .product-price-refined { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+  .price-current { font-size: 1.8rem; font-weight: 500; color: #121212; }
+  .price-old { color: rgba(18, 18, 18, 0.5); text-decoration: line-through; font-size: 1.4rem; }
+  .price-badge-sale { background: #f3f3f3; color: #121212; padding: 4px 12px; border-radius: 40px; font-size: 1.2rem; }
 
-  .product-description-refined { margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px; line-height: 1.8; color: #444; }
+  /* Variant Picker Precision */
+  .variant-input-wrapper { border: none; padding: 0; margin: 0 0 25px; }
+  .variant-label { font-size: 1.3rem; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; }
+  .variant-label span { font-weight: 400; color: #666; }
+  .variant-options-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .variant-swatch { 
+    border: 1px solid rgba(18, 18, 18, 0.1); 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    font-size: 1.3rem; 
+    transition: all 0.2s ease;
+  }
+  input:checked + .variant-swatch { 
+    background: #121212; 
+    color: #fff; 
+    border-color: #121212; 
+  }
+
+  /* ATC Button Precision */
+  .product-buy-buttons { display: flex; gap: 10px; margin-top: 35px; }
+  .quantity-input-refined { display: flex; border: 1px solid rgba(18, 18, 18, 0.1); width: 120px; }
+  .quantity-input-refined button { flex: 1; background: none; border: none; cursor: pointer; font-size: 18px; }
+  .quantity-input-refined input { width: 40px; border: none; text-align: center; font-weight: 600; }
+  
+  .atc-button-precision { 
+    flex: 2; 
+    height: 50px; 
+    background: #121212; 
+    color: #fff; 
+    border: none; 
+    font-weight: 600; 
+    letter-spacing: 0.1em; 
+    cursor: pointer;
+    transition: box-shadow 0.1s ease;
+  }
+  .atc-button-precision:hover { box-shadow: 0 0 0 0.1rem #121212; }
+
+  /* Accordion Precision */
+  .product-accordions { margin-top: 40px; border-top: 1px solid #eee; }
+  details { border-bottom: 1px solid #eee; }
+  summary { 
+    padding: 15px 0; 
+    list-style: none; 
+    cursor: pointer; 
+    font-weight: 600; 
+    font-size: 1.2rem; 
+    letter-spacing: 0.15em; 
+    display: flex; 
+    justify-content: space-between; 
+  }
+  summary::-webkit-details-marker { display: none; }
+  .accordion-content { padding-bottom: 20px; font-size: 1.4rem; color: #444; line-height: 1.6; }
 
   @media (max-width: 990px) {
-    .product-layout { grid-template-columns: 1fr; gap: 40px; }
-    .product-title-large { font-size: 24px; }
+    .product-layout { grid-template-columns: 1fr; }
   }
 </style>

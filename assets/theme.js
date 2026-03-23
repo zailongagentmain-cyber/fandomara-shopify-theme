@@ -1,34 +1,53 @@
-// Generic Drawer Logic
+// Refined Drawer Logic for Smooth Mobile Experience
 function openDrawer(id) {
-  document.getElementById(id).classList.add('is-open');
-  document.getElementById('PageOverlay').classList.add('is-visible');
-  document.body.style.overflow = 'hidden'; // Prevent scroll
+  const drawer = document.getElementById(id);
+  const overlay = document.getElementById('PageOverlay');
+  
+  if (!drawer || !overlay) return;
+
+  drawer.classList.add('is-open');
+  overlay.classList.add('is-visible');
+  
+  // Prevent background scrolling and "rubber-banding" on iOS
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
 }
 
 function closeDrawer(id) {
+  const overlay = document.getElementById('PageOverlay');
+  
   if (id) {
-    document.getElementById(id).classList.remove('is-open');
+    const drawer = document.getElementById(id);
+    if (drawer) drawer.classList.remove('is-open');
   } else {
-    // Close all
-    document.querySelectorAll('.drawer').forEach(d => d.classList.remove('is-open'));
+    // Close all active drawers
+    document.querySelectorAll('.drawer.is-open').forEach(d => d.classList.remove('is-open'));
   }
-  document.getElementById('PageOverlay').classList.remove('is-visible');
+
+  if (overlay) overlay.classList.remove('is-visible');
+  
+  // Re-enable scrolling
   document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
 }
 
-// Close on overlay click
+// Global Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('PageOverlay');
   if (overlay) {
     overlay.addEventListener('click', () => closeDrawer());
   }
+
+  // Handle ESC key to close drawers
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrawer();
+  });
 });
 
-// Update ATC button to open drawer (Demo Logic)
+// Shopify AJAX Cart Integration Placeholder
+// This will make the cart drawer open automatically when an item is added
 document.addEventListener('submit', (e) => {
-  if (e.target.matches('.product-form-refined')) {
-    // In a real AJAX implementation, we would prevent default and use fetch
-    // For now, we'll let it submit, but this is where the AJAX Cart logic starts
-    console.log("Adding to cart...");
+  if (e.target.matches('form[action="/cart/add"]')) {
+     // If you implement AJAX cart later, call openDrawer('CartDrawer') here
   }
 });
