@@ -1,0 +1,131 @@
+<div class="collection-header container">
+  <h1 class="collection-title">{{ collection.title }}</h1>
+  {%- if collection.description != blank -%}
+    <div class="collection-description rte">
+      {{ collection.description }}
+    </div>
+  {%- endif -%}
+</div>
+
+<div class="collection-product-grid container">
+  {%- paginate collection.products by section.settings.products_per_page -%}
+    <div class="product-grid" id="ProductGridContainer">
+      {%- for product in collection.products -%}
+        <div class="product-grid__item">
+          {% render 'product-card', product: product %}
+        </div>
+      {%- else -%}
+        <p class="collection-empty">No products found in this collection.</p>
+      {%- endfor -%}
+    </div>
+
+    {%- if paginate.pages > 1 -%}
+      <nav class="pagination" role="navigation">
+        <ol class="pagination__list">
+          {%- if paginate.previous -%}
+            <li>
+              <a href="{{ paginate.previous.url }}" class="pagination__item">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor"><path d="M7 1L3 5l4 4"/></svg>
+                PREVIOUS
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- for part in paginate.parts -%}
+            <li>
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}" class="pagination__item">{{ part.title }}</a>
+              {%- else -%}
+                {%- if part.title == paginate.current_page -%}
+                  <span class="pagination__item pagination__item--current" aria-current="page">{{ part.title }}</span>
+                {%- else -%}
+                  <span class="pagination__item">{{ part.title }}</span>
+                {%- endif -%}
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+
+          {%- if paginate.next -%}
+            <li>
+              <a href="{{ paginate.next.url }}" class="pagination__item">
+                NEXT
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor"><path d="M3 1l4 4-4 4"/></svg>
+              </a>
+            </li>
+          {%- endif -%}
+        </ol>
+      </nav>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+<style>
+  .collection-header {
+    text-align: center;
+    padding: 60px 0 40px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 40px;
+  }
+  .collection-title {
+    font-size: 32px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 15px;
+  }
+  .collection-description {
+    max-width: 600px;
+    margin: 0 auto;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .collection-product-grid {
+    padding-bottom: 80px;
+  }
+
+  /* Pagination Styles */
+  .pagination {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+  }
+  .pagination__list {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  .pagination__item {
+    font-size: 13px;
+    padding: 5px 10px;
+    color: #999;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .pagination__item:hover { color: var(--color-text); }
+  .pagination__item--current {
+    color: var(--color-text);
+    font-weight: bold;
+    border-bottom: 2px solid var(--color-text);
+  }
+
+  @media (max-width: 768px) {
+    .collection-title { font-size: 24px; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Collection Grid",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "default": 16,
+      "label": "Products per page"
+    }
+  ]
+}
+{% endschema %}
