@@ -1,0 +1,146 @@
+<section class="product-section container">
+  <div class="product-layout">
+    <!-- 1. Product Media (Left Side) -->
+    <div class="product-media">
+      <div class="product-main-image">
+        {%- if product.selected_or_first_available_variant.featured_media != blank -%}
+          <img src="{{ product.selected_or_first_available_variant.featured_media | image_url: width: 1000 }}" 
+               alt="{{ product.title | escape }}"
+               id="MainProductImage">
+        {%- else -%}
+          <img src="{{ product.featured_media | image_url: width: 1000 }}" 
+               alt="{{ product.title | escape }}"
+               id="MainProductImage">
+        {%- endif -%}
+      </div>
+      <div class="product-thumbnails">
+        {%- for media in product.media -%}
+          <div class="thumbnail-item" onclick="document.getElementById('MainProductImage').src='{{ media | image_url: width: 1000 }}'">
+            <img src="{{ media | image_url: width: 150 }}" alt="{{ media.alt | escape }}">
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <!-- 2. Product Info (Right Side) -->
+    <div class="product-info">
+      <nav class="breadcrumb">
+        <a href="/">Home</a> / {{ product.collections.first.title }} / {{ product.title }}
+      </nav>
+
+      <h1 class="product-title">{{ product.title }}</h1>
+
+      <div class="product-price-wrapper">
+        <span class="product-price-current" id="PriceCurrent">{{ product.selected_or_first_available_variant.price | money }}</span>
+        {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+          <span class="product-price-old" id="PriceCompare">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+        {%- endif -%}
+      </div>
+
+      {%- form 'product', product -%}
+        <!-- Variant Picker -->
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        
+        {%- unless product.has_only_default_variant -%}
+          <div class="product-variants">
+            {%- for option in product.options_with_values -%}
+              <div class="variant-option">
+                <label>{{ option.name }}</label>
+                <select class="variant-select" onchange="updateVariant(this)">
+                  {%- for value in option.values -%}
+                    <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>
+                      {{ value }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endunless -%}
+
+        <!-- Quantity -->
+        <div class="product-quantity">
+          <label for="Quantity">Quantity</label>
+          <input type="number" id="Quantity" name="quantity" value="1" min="1">
+        </div>
+
+        <!-- Add to Cart Button -->
+        <div class="product-actions">
+          <button type="submit" name="add" class="add-to-cart-btn" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+            {%- if product.selected_or_first_available_variant.available -%}
+              ADD TO CART
+            {%- else -%}
+              SOLD OUT
+            {%- endif -%}
+          </button>
+        </div>
+      {%- endform -%}
+
+      <div class="product-description rte">
+        {{ product.description }}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .product-section { padding: 40px 0; }
+  .product-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 50px; }
+  
+  /* Media Styles */
+  .product-main-image img { width: 100%; height: auto; border: 1px solid #eee; }
+  .product-thumbnails { display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; }
+  .thumbnail-item { width: 80px; cursor: pointer; border: 1px solid #eee; }
+  .thumbnail-item img { width: 100%; display: block; }
+  
+  /* Info Styles */
+  .breadcrumb { font-size: 12px; color: #888; margin-bottom: 15px; }
+  .product-title { font-size: 28px; margin-bottom: 15px; text-transform: uppercase; }
+  .product-price-wrapper { margin-bottom: 25px; }
+  .product-price-current { font-size: 22px; font-weight: bold; color: var(--color-accent); }
+  .product-price-old { text-decoration: line-through; color: #999; margin-left: 10px; }
+  
+  /* Form Styles */
+  .variant-option { margin-bottom: 20px; }
+  .variant-option label { display: block; font-size: 13px; margin-bottom: 8px; font-weight: bold; }
+  .variant-select { width: 100%; padding: 10px; border: 1px solid #ddd; }
+  .product-quantity { margin-bottom: 25px; }
+  .product-quantity input { width: 60px; padding: 8px; text-align: center; border: 1px solid #ddd; }
+  
+  .add-to-cart-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--color-text);
+    color: white;
+    border: none;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+  .add-to-cart-btn:hover { opacity: 0.9; }
+  .add-to-cart-btn[disabled] { background: #ccc; cursor: not-allowed; }
+
+  .product-description { margin-top: 30px; line-height: 1.6; font-size: 15px; border-top: 1px solid #eee; padding-top: 20px; }
+
+  @media (max-width: 768px) {
+    .product-layout { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  // 简易的变体切换逻辑（后续可通过 Shopify API 完善）
+  function updateVariant(select) {
+    // 这里未来会加入 AJAX 逻辑来更新价格和库存状态
+    console.log("Selected variant option: " + select.value);
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Main Product",
+  "settings": [
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": true }
+  ]
+}
+{% endschema %}

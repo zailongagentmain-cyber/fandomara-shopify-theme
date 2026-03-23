@@ -1,0 +1,21 @@
+{
+  "name": "Product",
+  "wrapper": "div#MainContent",
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "show_vendor": true,
+        "show_share_buttons": true
+      }
+    },
+    "recommendations": {
+      "type": "main-index",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "recommendations"
+  ]
+}

@@ -15,6 +15,13 @@
       "block_order": ["slide_1"],
       "settings": {}
     },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "New Arrivals",
+        "products_to_show": 4
+      }
+    },
     "main": {
       "type": "main-index",
       "settings": {}
@@ -22,6 +29,7 @@
   },
   "order": [
     "hero",
+    "featured_collection",
     "main"
   ]
 }
