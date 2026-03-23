@@ -1,0 +1,27 @@
+{
+  "name": "index",
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "blocks": {
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "heading": "FANDOMARA SPECIAL",
+            "subheading": "Get 30% OFF on all Love & Deepspace collections"
+          }
+        }
+      },
+      "block_order": ["slide_1"],
+      "settings": {}
+    },
+    "main": {
+      "type": "main-index",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "main"
+  ]
+}
