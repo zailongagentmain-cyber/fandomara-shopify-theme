@@ -9,47 +9,40 @@
 <div class="header-wrapper">
   <div class="container">
     <header class="header">
-      <!-- Search (Left/Hidden on mobile) -->
-      <div class="header__icons header__icons--left" style="grid-column: 1;">
-        <a href="/search" class="icon-link">
+      <!-- Hamburger (Mobile Only) / Search (Desktop) -->
+      <div class="header__icons header__icons--left">
+        <button type="button" class="mobile-menu-trigger icon-link" onclick="openDrawer('MobileMenu')">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <a href="/search" class="icon-link desktop-search">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </a>
       </div>
 
-      <!-- Logo (Center) -->
+      <!-- Logo -->
       <div class="header__logo">
         <a href="{{ routes.root_url }}">
-          {%- if section.settings.logo_image != blank -%}
-             <img src="{{ section.settings.logo_image | image_url: height: 120 }}" alt="{{ shop.name }}">
-          {%- else -%}
-             <img src="{{ 'Logo-01_180x.png' | asset_url }}" alt="{{ shop.name }}" style="max-height: 50px;">
-          {%- endif -%}
+          <img src="{{ 'Logo-01_180x.png' | asset_url }}" alt="{{ shop.name }}" style="max-height: 50px;">
         </a>
       </div>
 
-      <!-- Icons (Right) -->
+      <!-- Icons -->
       <div class="header__icons">
-        <a href="{{ routes.account_login_url }}" class="icon-link">
+        <a href="{{ routes.account_login_url }}" class="icon-link desktop-only">
            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </a>
-        <a href="{{ routes.cart_url }}" class="icon-link" style="position: relative;">
+        <button type="button" class="icon-link" onclick="openDrawer('CartDrawer')" style="position: relative; background: none; border: none;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-          {%- if cart.item_count > 0 -%}
-            <span class="cart-count-badge">{{ cart.item_count }}</span>
-          {%- endif -%}
-        </a>
+          <span class="cart-count-badge">{{ cart.item_count }}</span>
+        </button>
       </div>
     </header>
 
-    <!-- Main Navigation -->
+    <!-- Navigation -->
     <nav class="header__nav">
       <ul>
         {%- for link in section.settings.menu.links -%}
-          <li>
-            <a href="{{ link.url }}">
-              {{ link.title }}
-            </a>
-          </li>
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
         {%- endfor -%}
       </ul>
     </nav>
@@ -57,20 +50,14 @@
 </div>
 
 <style>
-  .cart-count-badge {
-    position: absolute;
-    top: -5px;
-    right: -10px;
-    background: #000;
-    color: #fff;
-    font-size: 10px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
+  .mobile-menu-trigger { display: none; background: none; border: none; }
+  .desktop-only { display: block; }
+  
+  @media (max-width: 768px) {
+    .mobile-menu-trigger { display: block; }
+    .desktop-search, .desktop-only { display: none; }
+    .header { grid-template-columns: 1fr 1fr 1fr; }
+    .header__logo { grid-column: 2; }
   }
 </style>
 
@@ -80,7 +67,6 @@
   "settings": [
     { "type": "checkbox", "id": "show_announcement", "label": "Show announcement", "default": true },
     { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "Opening Sale: 30% OFF + Free Shipping" },
-    { "type": "image_picker", "id": "logo_image", "label": "Logo image" },
     { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" }
   ]
 }
