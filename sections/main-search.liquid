@@ -1,0 +1,87 @@
+<div class="search-section container">
+  <div class="search-header text-center">
+    {%- if search.performed -%}
+      <h1 class="search-title">Search results for "{{ search.terms | escape }}"</h1>
+      <p class="search-count">{{ search.results_count }} results found</p>
+    {%- else -%}
+      <h1 class="search-title">Search our store</h1>
+    {%- endif -%}
+
+    <div class="search-bar-wrapper">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+        <input
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="Search products..."
+          class="search-input"
+        >
+        <button type="submit" class="search-submit">SEARCH</button>
+      </form>
+    </div>
+  </div>
+
+  {%- if search.performed -%}
+    <div class="search-results-grid">
+      {%- paginate search.results by section.settings.products_per_page -%}
+        <div class="product-grid">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              <div class="product-grid__item">
+                {% render 'product-card', product: item %}
+              </div>
+            {%- else -%}
+              {% comment %} 处理文章或普通页面的搜索结果 {% endcomment %}
+              <div class="product-grid__item search-item-other">
+                 <a href="{{ item.url }}">
+                   <h3>{{ item.title }}</h3>
+                   <p>{{ item.content | strip_html | truncate: 100 }}</p>
+                 </a>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          {% render 'pagination', paginate: paginate %}
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .search-section { padding: 60px 0; }
+  .search-header { margin-bottom: 50px; }
+  .search-title { font-size: 32px; text-transform: uppercase; margin-bottom: 10px; }
+  .search-count { color: #666; margin-bottom: 30px; }
+  
+  .search-bar-wrapper { max-width: 600px; margin: 0 auto; }
+  .search-form { display: flex; border-bottom: 2px solid var(--color-text); }
+  .search-input { flex: 1; border: none; padding: 15px 0; font-size: 18px; outline: none; }
+  .search-submit { background: none; border: none; font-weight: bold; cursor: pointer; padding: 0 20px; letter-spacing: 0.1em; }
+
+  .search-results-grid { margin-top: 60px; }
+  .search-item-other { border: 1px solid #eee; padding: 20px; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .search-item-other h3 { font-size: 16px; margin-bottom: 10px; }
+  .search-item-other p { font-size: 13px; color: #666; }
+
+  .text-center { text-align: center; }
+</style>
+
+{% schema %}
+{
+  "name": "Search Page",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "default": 16,
+      "label": "Results per page"
+    }
+  ]
+}
+{% endschema %}

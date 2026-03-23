@@ -1,17 +1,155 @@
 <footer class="footer">
   <div class="container">
-    <div class="footer__content">
-       <!-- Footer links and columns will go here -->
+    <div class="footer__blocks">
+      {%- for block in section.blocks -%}
+        <div class="footer__block" {{ block.shopify_attributes }}>
+          {%- case block.type -%}
+            {%- when 'menu' -%}
+              <div class="footer__menu">
+                <h3 class="footer__block-title">{{ block.settings.heading | escape }}</h3>
+                <ul class="footer__menu-list">
+                  {%- for link in block.settings.menu.links -%}
+                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            {%- when 'text' -%}
+              <div class="footer__text">
+                <h3 class="footer__block-title">{{ block.settings.heading | escape }}</h3>
+                <div class="footer__text-content rte">
+                  {{ block.settings.content }}
+                </div>
+              </div>
+          {%- endcase -%}
+        </div>
+      {%- endfor -%}
     </div>
-    <div class="footer__copyright">
-      <p>&copy; {{ 'now' | date: "%Y" }} {{ shop.name }}. All rights reserved.</p>
+
+    <div class="footer__bottom">
+      <div class="footer__copyright">
+        &copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: routes.root_url }}. All rights reserved.
+      </div>
+      <div class="footer__payment-icons">
+        {% comment %} 这里可以加入支付图标逻辑 {% endcomment %}
+      </div>
     </div>
   </div>
 </footer>
 
+<style>
+  .footer {
+    background-color: #f8f8f8;
+    padding: 80px 0 40px;
+    margin-top: 60px;
+    border-top: 1px solid #eee;
+  }
+  .footer__blocks {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    margin-bottom: 60px;
+  }
+  .footer__block-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 25px;
+    font-weight: bold;
+  }
+  .footer__menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer__menu-list li {
+    margin-bottom: 12px;
+  }
+  .footer__menu-list a {
+    font-size: 14px;
+    color: #666;
+    transition: color 0.3s;
+  }
+  .footer__menu-list a:hover {
+    color: var(--color-text);
+  }
+  .footer__text-content {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+  }
+  .footer__bottom {
+    padding-top: 40px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #999;
+  }
+
+  @media (max-width: 990px) {
+    .footer__blocks {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 768px) {
+    .footer__blocks {
+      grid-template-columns: 1fr;
+    }
+    .footer__bottom {
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+  }
+</style>
+
 {% schema %}
 {
   "name": "Footer",
-  "settings": []
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Quick links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Our Story"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Share store details, promotions, or brand content with your customers.</p>"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "menu" },
+      { "type": "text" }
+    ]
+  }
 }
 {% endschema %}

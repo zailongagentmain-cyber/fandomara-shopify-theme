@@ -1,0 +1,69 @@
+{% comment %}
+    Renders a pagination bar
+    Accepts:
+    - paginate: {Object}
+{% endcomment %}
+
+<nav class="pagination" role="navigation">
+  <ol class="pagination__list">
+    {%- if paginate.previous -%}
+      <li>
+        <a href="{{ paginate.previous.url }}" class="pagination__item">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor"><path d="M7 1L3 5l4 4"/></svg>
+          PREVIOUS
+        </a>
+      </li>
+    {%- endif -%}
+
+    {%- for part in paginate.parts -%}
+      <li>
+        {%- if part.is_link -%}
+          <a href="{{ part.url }}" class="pagination__item">{{ part.title }}</a>
+        {%- else -%}
+          {%- if part.title == paginate.current_page -%}
+            <span class="pagination__item pagination__item--current" aria-current="page">{{ part.title }}</span>
+          {%- else -%}
+            <span class="pagination__item">{{ part.title }}</span>
+          {%- endif -%}
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+
+    {%- if paginate.next -%}
+      <li>
+        <a href="{{ paginate.next.url }}" class="pagination__item">
+          NEXT
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor"><path d="M3 1l4 4-4 4"/></svg>
+        </a>
+      </li>
+    {%- endif -%}
+  </ol>
+</nav>
+
+<style>
+  .pagination {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+  }
+  .pagination__list {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+  }
+  .pagination__item {
+    font-size: 13px;
+    padding: 5px 10px;
+    color: #999;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .pagination__item:hover { color: var(--color-text); }
+  .pagination__item--current {
+    color: var(--color-text);
+    font-weight: bold;
+    border-bottom: 2px solid var(--color-text);
+  }
+</style>

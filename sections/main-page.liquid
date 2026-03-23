@@ -1,0 +1,27 @@
+<div class="page-section container">
+  <div class="page-header text-center">
+    <h1 class="page-title">{{ page.title }}</h1>
+  </div>
+  
+  <div class="page-content rte">
+    {{ page.content }}
+  </div>
+</div>
+
+<style>
+  .page-section { padding: 80px 0; max-width: 800px; margin: 0 auto; }
+  .page-header { margin-bottom: 50px; }
+  .page-title { font-size: 36px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .page-content { line-height: 1.8; font-size: 16px; color: #333; }
+  
+  /* 确保 RTE（富文本编辑器）生成的内容有间距 */
+  .rte p { margin-bottom: 20px; }
+  .rte img { max-width: 100%; height: auto; }
+</style>
+
+{% schema %}
+{
+  "name": "Page Content",
+  "settings": []
+}
+{% endschema %}
