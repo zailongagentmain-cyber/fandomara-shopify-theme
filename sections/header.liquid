@@ -9,20 +9,20 @@
 <div class="header-wrapper">
   <div class="container">
     <header class="header">
-      <!-- Search Icon (Left) -->
-      <div class="header__icons header__icons--left">
+      <!-- Search (Left/Hidden on mobile) -->
+      <div class="header__icons header__icons--left" style="grid-column: 1;">
         <a href="/search" class="icon-link">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </a>
       </div>
 
       <!-- Logo (Center) -->
       <div class="header__logo">
         <a href="{{ routes.root_url }}">
-          {%- if section.settings.logo != blank -%}
-            <img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ shop.name }}">
+          {%- if section.settings.logo_image != blank -%}
+             <img src="{{ section.settings.logo_image | image_url: height: 120 }}" alt="{{ shop.name }}">
           {%- else -%}
-            {{ shop.name | uppercase }}
+             <img src="{{ 'Logo-01_180x.png' | asset_url }}" alt="{{ shop.name }}" style="max-height: 50px;">
           {%- endif -%}
         </a>
       </div>
@@ -30,23 +30,23 @@
       <!-- Icons (Right) -->
       <div class="header__icons">
         <a href="{{ routes.account_login_url }}" class="icon-link">
-           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </a>
-        <a href="{{ routes.cart_url }}" class="icon-link">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        <a href="{{ routes.cart_url }}" class="icon-link" style="position: relative;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
           {%- if cart.item_count > 0 -%}
-            <span class="cart-count">{{ cart.item_count }}</span>
+            <span class="cart-count-badge">{{ cart.item_count }}</span>
           {%- endif -%}
         </a>
       </div>
     </header>
 
-    <!-- Main Navigation (Below Logo) -->
+    <!-- Main Navigation -->
     <nav class="header__nav">
       <ul>
         {%- for link in section.settings.menu.links -%}
           <li>
-            <a href="{{ link.url }}" {% if link.active %}class="active"{% endif %}>
+            <a href="{{ link.url }}">
               {{ link.title }}
             </a>
           </li>
@@ -57,20 +57,20 @@
 </div>
 
 <style>
-  .header__nav {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 15px;
-  }
-  .cart-count {
-    background: var(--color-accent);
-    color: white;
+  .cart-count-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: #000;
+    color: #fff;
     font-size: 10px;
-    padding: 2px 6px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    position: relative;
-    top: -10px;
-    left: -5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
   }
 </style>
 
@@ -78,29 +78,10 @@
 {
   "name": "Header",
   "settings": [
-    {
-      "type": "checkbox",
-      "id": "show_announcement",
-      "label": "Show announcement",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "announcement_text",
-      "label": "Announcement text",
-      "default": "Opening Sale: 30% OFF + Free Shipping"
-    },
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "Logo image"
-    },
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "Menu",
-      "default": "main-menu"
-    }
+    { "type": "checkbox", "id": "show_announcement", "label": "Show announcement", "default": true },
+    { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "Opening Sale: 30% OFF + Free Shipping" },
+    { "type": "image_picker", "id": "logo_image", "label": "Logo image" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" }
   ]
 }
 {% endschema %}
